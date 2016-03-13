@@ -69,11 +69,25 @@ func (net *NeuralNetworkType) Learn(input []float64, y []float64) error {
 		if (output[i] != y[i]) {
 			// Retro propagate
 			fmt.Println("#### RETROPROPAGATE")
-			for j := len(net.layers)-1; j >= 0; j-- {
+			for j := len(net.layers) - 1; j >= 0; j-- {
 				if j == len(net.layers) - 1 {
 					//output layer
 					for k, _ := range net.layers[j].neurals {
 						net.layers[j].neurals[k].delta = y[k] - output[k]
+						for l, _ := range net.layers[j].neurals[k].weight {
+							fmt.Println("w", l, " av modif : ", net.layers[j].neurals[k].weight[l])
+							net.layers[j].neurals[k].weight[l] = net.layers[j].neurals[k].weight[l] + ε * net.layers[j].neurals[k].input[l] * net.layers[j].neurals[k].delta
+							fmt.Println("w", l, " ap modif : ", net.layers[j].neurals[k].weight[l])
+						}
+
+					}
+				} else {
+					for k, _ := range net.layers[j].neurals {
+						temp := 0.0
+						for l, _ := range net.layers[j + 1].neurals {
+							temp += net.layers[j + 1].neurals[l].weight[k] * net.layers[j + 1].neurals[l].delta
+						}
+						net.layers[j].neurals[k].delta = output[k] * (1 - output[k]) * temp
 						for l, _ := range net.layers[j].neurals[k].weight {
 							fmt.Println("w", l, " av modif : ", net.layers[j].neurals[k].weight[l])
 							net.layers[j].neurals[k].weight[l] = net.layers[j].neurals[k].weight[l] + ε * net.layers[j].neurals[k].input[l] * net.layers[j].neurals[k].delta
