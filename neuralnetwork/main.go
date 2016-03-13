@@ -11,7 +11,7 @@ type NeuralType  struct {
 	input  []float64
 	weight []float64
 	delta  float64
-	outup  float64
+	output float64
 }
 
 type LayerType struct {
@@ -87,7 +87,7 @@ func (net *NeuralNetworkType) Learn(input []float64, y []float64) error {
 						for l, _ := range net.layers[j + 1].neurals {
 							temp += net.layers[j + 1].neurals[l].weight[k] * net.layers[j + 1].neurals[l].delta
 						}
-						net.layers[j].neurals[k].delta = output[k] * (1 - output[k]) * temp
+						net.layers[j].neurals[k].delta = net.layers[j].neurals[k].output * (1 - net.layers[j].neurals[k].output) * temp
 						for l, _ := range net.layers[j].neurals[k].weight {
 							fmt.Println("w", l, " av modif : ", net.layers[j].neurals[k].weight[l])
 							net.layers[j].neurals[k].weight[l] = net.layers[j].neurals[k].weight[l] + ε * net.layers[j].neurals[k].input[l] * net.layers[j].neurals[k].delta
@@ -111,13 +111,13 @@ func (net *NeuralNetworkType) Cogitate(input []float64) (output []float64) {
 				for k := range input {
 					net.layers[i].neurals[j].input[k + 1] = input[k]
 				}
-				net.layers[i].neurals[j].outup = net.layers[i].neurals[j].sum()
+				net.layers[i].neurals[j].output = net.layers[i].neurals[j].sum()
 				continue
 			}else {
 				for k := range net.layers[i - 1].neurals {
-					net.layers[i].neurals[j].input[k + 1] = net.layers[i - 1].neurals[k].outup
+					net.layers[i].neurals[j].input[k + 1] = net.layers[i - 1].neurals[k].output
 				}
-				net.layers[i].neurals[j].outup = net.layers[i].neurals[j].sum()
+				net.layers[i].neurals[j].output = net.layers[i].neurals[j].sum()
 			}
 		}
 	}
@@ -125,7 +125,7 @@ func (net *NeuralNetworkType) Cogitate(input []float64) (output []float64) {
 	output = make([]float64, len(net.layers[len(net.layers) - 1].neurals))
 
 	for i := range net.layers[len(net.layers) - 1].neurals {
-		output[i] = net.layers[len(net.layers) - 1].neurals[i].outup
+		output[i] = net.layers[len(net.layers) - 1].neurals[i].output
 	}
 
 	return output
