@@ -83,6 +83,8 @@ func (net *NeuralNetworkType) Learn(input []float64, y []float64) error {
 					}
 				}
 			}
+		} else {
+			fmt.Println("trouve mouahahaha")
 		}
 	}
 	return nil
