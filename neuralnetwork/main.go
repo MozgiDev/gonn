@@ -70,7 +70,7 @@ func (net *NeuralNetworkType) Learn(input []float64, y []float64) error {
 			// Retro propagate
 			fmt.Println("#### RETROPROPAGATE")
 			for j := len(net.layers)-1; j >= 0; j-- {
-				if j == len(net.layers) {
+				if j == len(net.layers) - 1 {
 					//output layer
 					for k, _ := range net.layers[j].neurals {
 						net.layers[j].neurals[k].delta = y[k] - output[k]
