@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	Xor := neuralnetwork.New(2, 1)
+	Xor := neuralnetwork.New(2, 2, 1)
 
 	Xor.Init()
 	fmt.Println(Xor)
@@ -36,11 +36,12 @@ func main() {
 	xorY4 := make([]float64, 1)
 	xorY4[0] = 0.
 
-	for i := 0; i < 1; i++ {
-		Xor.Learn(xorX1,xorY1)
-		Xor.Learn(xorX2,xorY2)
-		Xor.Learn(xorX3,xorY3)
-		Xor.Learn(xorX4,xorY4)
+	for i := 0; i < 100000000; i++ {
+		Xor.Learn(xorX1, xorY1)
+		Xor.Learn(xorX2, xorY2)
+		Xor.Learn(xorX3, xorY3)
+		Xor.Learn(xorX4, xorY4)
+		neuralnetwork.Ɛ = neuralnetwork.Ɛ / 2
 	}
 
 	fmt.Println()

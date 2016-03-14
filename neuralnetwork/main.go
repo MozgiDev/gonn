@@ -5,6 +5,7 @@ import (
 	"time"
 	"fmt"
 	"errors"
+"math"
 )
 
 type NeuralType  struct {
@@ -22,7 +23,7 @@ type NeuralNetworkType struct {
 	layers []LayerType
 }
 
-var ε = 1.0
+var Ɛ = 1.
 
 func New(param ...int) *NeuralNetworkType {
 	net := new(NeuralNetworkType)
@@ -53,7 +54,7 @@ func (net *NeuralNetworkType) Init() {
 	for i, _ := range net.layers {
 		for j, _ := range net.layers[i].neurals {
 			for k, _ := range net.layers[i].neurals[j].weight {
-				net.layers[i].neurals[j].weight[k] = float64(rand.Intn(2) - 1)
+				net.layers[i].neurals[j].weight[k] = float64(rand.Intn(2) + 1)
 			}
 		}
 	}
@@ -66,7 +67,14 @@ func (net *NeuralNetworkType) Learn(input []float64, y []float64) error {
 	}
 
 	for i, _ := range output {
-		if (output[i] != y[i]) {
+		var res float64;
+		if (output[i] > 0.5) {
+			res = 1;
+		} else {
+			res = 0;
+		}
+		fmt.Println("input:", input, " | output : ", res )
+		if (res != y[i]) {
 			// Retro propagate
 			fmt.Println("#### RETROPROPAGATE")
 			for j := len(net.layers) - 1; j >= 0; j-- {
@@ -75,9 +83,9 @@ func (net *NeuralNetworkType) Learn(input []float64, y []float64) error {
 					for k, _ := range net.layers[j].neurals {
 						net.layers[j].neurals[k].delta = y[k] - output[k]
 						for l, _ := range net.layers[j].neurals[k].weight {
-							fmt.Println("w", l, " av modif : ", net.layers[j].neurals[k].weight[l])
-							net.layers[j].neurals[k].weight[l] = net.layers[j].neurals[k].weight[l] + ε * net.layers[j].neurals[k].input[l] * net.layers[j].neurals[k].delta
-							fmt.Println("w", l, " ap modif : ", net.layers[j].neurals[k].weight[l])
+							//fmt.Println("w", l, " av modif : ", net.layers[j].neurals[k].weight[l])
+							net.layers[j].neurals[k].weight[l] = net.layers[j].neurals[k].weight[l] + Ɛ * net.layers[j].neurals[k].input[l] * net.layers[j].neurals[k].delta
+							//fmt.Println("w", l, " ap modif : ", net.layers[j].neurals[k].weight[l])
 						}
 
 					}
@@ -89,9 +97,9 @@ func (net *NeuralNetworkType) Learn(input []float64, y []float64) error {
 						}
 						net.layers[j].neurals[k].delta = net.layers[j].neurals[k].output * (1 - net.layers[j].neurals[k].output) * temp
 						for l, _ := range net.layers[j].neurals[k].weight {
-							fmt.Println("w", l, " av modif : ", net.layers[j].neurals[k].weight[l])
-							net.layers[j].neurals[k].weight[l] = net.layers[j].neurals[k].weight[l] + ε * net.layers[j].neurals[k].input[l] * net.layers[j].neurals[k].delta
-							fmt.Println("w", l, " ap modif : ", net.layers[j].neurals[k].weight[l])
+							//fmt.Println("w", l, " av modif : ", net.layers[j].neurals[k].weight[l])
+							net.layers[j].neurals[k].weight[l] = net.layers[j].neurals[k].weight[l] + Ɛ * net.layers[j].neurals[k].input[l] * net.layers[j].neurals[k].delta
+							//fmt.Println("w", l, " ap modif : ", net.layers[j].neurals[k].weight[l])
 						}
 
 					}
@@ -166,8 +174,14 @@ func activited(x float64) (float64) {
 	//return 1 / (1 + math.Pow(math.E, -(y) * x))
 	//y :=  2 / (1 + math.Pow(math.E,-x) - 1)
 
-	if x > 0. {
-		return 1.0
-	}
-	return 0.0
+	//if x > 0. {
+	//	return 1.0
+	//}
+	//return 0.0
+
+
+	// La logistic
+	y := 1 / (1 + math.Pow(math.E, -x));
+	return y
+
 }
