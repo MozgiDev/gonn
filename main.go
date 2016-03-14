@@ -4,49 +4,62 @@ import (
 	"./neuralnetwork"
 	"fmt"
 	"time"
+	"math/rand"
+	"strconv"
 )
 
 func main() {
-	Xor := neuralnetwork.New(2, 2, 1)
+	Xor := neuralnetwork.New(2, 1)
 
 	Xor.Init()
-	fmt.Println(Xor)
-	//xorX
-	xorX1 := make([]float64, 2)
-	xorX1[0] = 0.0
-	xorX1[1] = 0.0
-	xorY1 := make([]float64, 1)
-	xorY1[0] = 0.
 
-	xorX2 := make([]float64, 2)
-	xorX2[0] = 0.0
-	xorX2[1] = 1.0
-	xorY2 := make([]float64, 1)
-	xorY2[0] = 1.
-
-	xorX3 := make([]float64, 2)
-	xorX3[0] = 1.0
-	xorX3[1] = 0.0
-	xorY3 := make([]float64, 1)
-	xorY3[0] = 1.
-
-	xorX4 := make([]float64, 2)
-	xorX4[0] = 1.0
-	xorX4[1] = 1.0
-	xorY4 := make([]float64, 1)
-	xorY4[0] = 0.
-
-	for i := 0; i < 100000000; i++ {
-		Xor.Learn(xorX1, xorY1)
-		Xor.Learn(xorX2, xorY2)
-		Xor.Learn(xorX3, xorY3)
-		Xor.Learn(xorX4, xorY4)
-		neuralnetwork.Ɛ = neuralnetwork.Ɛ / 2
+	type example struct {
+		Input  []float64
+		Output []float64
+		Good   bool
+	}
+	type examples struct {
+		Ex []example
 	}
 
-	fmt.Println()
-	fmt.Println()
-	fmt.Println()
+	//xorX
+
+	EX := new(examples)
+	ex := example{[]float64{0., 0.}, []float64{0.}, false}
+	EX.Ex = append(EX.Ex, ex)
+	ex = example{[]float64{1., 0.}, []float64{1.}, false}
+	EX.Ex = append(EX.Ex, ex)
+	ex = example{[]float64{0., 1.}, []float64{1.}, false}
+	EX.Ex = append(EX.Ex, ex)
+	ex = example{[]float64{1., 1.}, []float64{0.}, false}
+	EX.Ex = append(EX.Ex, ex)
+
+	rand.Seed(time.Now().Unix())
+	fmt.Println(EX)
+
+	for i := 0; i < 10000000000000000; i++ {
+		fmt.Println("Ɛ:", neuralnetwork.Ɛ, " i:", i * 4, Xor)
+
+		j := rand.Intn(len(EX.Ex))
+		b, err := Xor.Learn(EX.Ex[j].Input, EX.Ex[j].Output)
+		EX.Ex[j].Good = b
+
+		if err != nil {
+			fmt.Println(err)
+		}
+		B := true
+		for k := range EX.Ex {
+			B = (B && EX.Ex[k].Good)
+		}
+		if B {
+			fmt.Println("END:",i)
+			Xor.Sav("XORFUN" + strconv.Itoa(i))
+			break
+		}
+		//neuralnetwork.Ɛ -= 0.0000001
+
+	}
+
 	fmt.Println(time.Now())
 
 

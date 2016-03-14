@@ -74,6 +74,7 @@ func (neu *NeuralType) Cogitate ()(output float64) {
 	return Sigmoid(somme)
 }
 
+
 func Sigmoid(x float64) (float64) {
 	//y := 5.0
 	//return 1 / (1 + math.Pow(math.E, -(y) * x))
