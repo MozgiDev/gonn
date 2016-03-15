@@ -8,6 +8,7 @@ import (
 	"math"
 	"encoding/json"
 	"os"
+	"reflect"
 )
 
 type NeuralType  struct {
@@ -67,51 +68,43 @@ func (net *NeuralNetworkType) Learn(Input []float64, y []float64) (bool, error) 
 		return false, errors.New("Output len does not match")
 	}
 
-	for i, _ := range Output {
-		var res float64;
-		if (Output[i] > 0.5) {
-			res = 1;
-		} else {
-			res = 0;
-		}
-		fmt.Println("Input:", Input, " | Output : ", res)
-		if (res != y[i]) {
-			// Retro propagate
-			fmt.Println("#### RETROPROPAGATE")
-			for j := len(net.Layers) - 1; j >= 0; j-- {
-				if j == len(net.Layers) - 1 {
-					//Output layer
-					for k, _ := range net.Layers[j].Neurals {
-						net.Layers[j].Neurals[k].Delta = y[k] - Output[k]
-						for l, _ := range net.Layers[j].Neurals[k].Weight {
-							//fmt.Println("w", l, " av modif : ", net.Layers[j].Neurals[k].Weight[l])
-							net.Layers[j].Neurals[k].Weight[l] = net.Layers[j].Neurals[k].Weight[l] + Ɛ * net.Layers[j].Neurals[k].Input[l] * net.Layers[j].Neurals[k].Delta
-							//fmt.Println("w", l, " ap modif : ", net.Layers[j].Neurals[k].Weight[l])
-						}
-
+	if (reflect.DeepEqual(y, Output)) != true {
+		// Retro propagate
+		fmt.Println("#### RETROPROPAGATE")
+		for j := len(net.Layers) - 1; j >= 0; j-- {
+			if j == len(net.Layers) - 1 {
+				//Output layer
+				for k, _ := range net.Layers[j].Neurals {
+					net.Layers[j].Neurals[k].Delta = y[k] - Output[k]
+					for l, _ := range net.Layers[j].Neurals[k].Weight {
+						//fmt.Println("w", l, " av modif : ", net.Layers[j].Neurals[k].Weight[l])
+						net.Layers[j].Neurals[k].Weight[l] = net.Layers[j].Neurals[k].Weight[l] + Ɛ * net.Layers[j].Neurals[k].Input[l] * net.Layers[j].Neurals[k].Delta
+						//fmt.Println("w", l, " ap modif : ", net.Layers[j].Neurals[k].Weight[l])
 					}
-				} else {
-					for k, _ := range net.Layers[j].Neurals {
-						temp := 0.0
-						for l, _ := range net.Layers[j + 1].Neurals {
-							temp += net.Layers[j + 1].Neurals[l].Weight[k] * net.Layers[j + 1].Neurals[l].Delta
-						}
-						net.Layers[j].Neurals[k].Delta = net.Layers[j].Neurals[k].Output * (1 - net.Layers[j].Neurals[k].Output) * temp
-						for l, _ := range net.Layers[j].Neurals[k].Weight {
-							//fmt.Println("w", l, " av modif : ", net.Layers[j].Neurals[k].Weight[l])
-							net.Layers[j].Neurals[k].Weight[l] = net.Layers[j].Neurals[k].Weight[l] + Ɛ * net.Layers[j].Neurals[k].Input[l] * net.Layers[j].Neurals[k].Delta
-							//fmt.Println("w", l, " ap modif : ", net.Layers[j].Neurals[k].Weight[l])
-						}
 
+				}
+			} else {
+				for k, _ := range net.Layers[j].Neurals {
+					temp := 0.0
+					for l, _ := range net.Layers[j + 1].Neurals {
+						temp += net.Layers[j + 1].Neurals[l].Weight[k] * net.Layers[j + 1].Neurals[l].Delta
 					}
+					net.Layers[j].Neurals[k].Delta = net.Layers[j].Neurals[k].Output * (1 - net.Layers[j].Neurals[k].Output) * temp
+					for l, _ := range net.Layers[j].Neurals[k].Weight {
+						//fmt.Println("w", l, " av modif : ", net.Layers[j].Neurals[k].Weight[l])
+						net.Layers[j].Neurals[k].Weight[l] = net.Layers[j].Neurals[k].Weight[l] + Ɛ * net.Layers[j].Neurals[k].Input[l] * net.Layers[j].Neurals[k].Delta
+						//fmt.Println("w", l, " ap modif : ", net.Layers[j].Neurals[k].Weight[l])
+					}
+
 				}
 			}
-			return false, nil
-		} else {
-			fmt.Println("#### GOOD")
-			return true, nil
 		}
+		return false, nil
+	} else {
+		fmt.Println("#### GOOD")
+		return true, nil
 	}
+
 	return false, nil
 }
 
@@ -136,7 +129,14 @@ func (net *NeuralNetworkType) Cogitate(Input []float64) (Output []float64) {
 	Output = make([]float64, len(net.Layers[len(net.Layers) - 1].Neurals))
 
 	for i := range net.Layers[len(net.Layers) - 1].Neurals {
-		Output[i] = net.Layers[len(net.Layers) - 1].Neurals[i].Output
+		//Output[i] = net.Layers[len(net.Layers) - 1].Neurals[i].Output
+		//test
+		if (net.Layers[len(net.Layers) - 1].Neurals[i].Output > 0.5) {
+			Output[i] = 1;
+		} else {
+			Output[i] = 0;
+		}
+		//fin test
 	}
 
 	return Output
