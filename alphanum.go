@@ -9,6 +9,7 @@ import (
 )
 
 func exampleAlphaNum() {
+
 	EXalpha := new(examples)
 	ex := example{[]float64{
 		0, 0, 0, 0, 0,
@@ -270,13 +271,15 @@ func exampleAlphaNum() {
 		1, 1, 1, 1, 0, }, []float64{1, 0, 0, 1, 0, 1}, false} //9
 	EXalpha.Ex = append(EXalpha.Ex, ex)
 
-	Xor := neuralnetwork.New(25, 6)
+	Xor := neuralnetwork.New(25, 25, 6)
 
 	Xor.Init()
 	rand.Seed(time.Now().Unix())
-	fmt.Println(EXalpha)
+	//fmt.Println(EXalpha)
 
 	k := 0
+	fmt.Println(time.Now())
+	neuralnetwork.Ɛ = 0.1
 	for i := 0; i < 100000000000; i++ {
 
 		//fmt.Println("Ɛ:", neuralnetwork.Ɛ, " i:", i * 4, Xor)
@@ -288,6 +291,7 @@ func exampleAlphaNum() {
 		if err != nil {
 			fmt.Println(err)
 		}
+
 		B := true
 		for k := range EXalpha.Ex {
 			B = (B && EXalpha.Ex[k].Good)
@@ -297,7 +301,7 @@ func exampleAlphaNum() {
 		}else {
 			k = 0
 		}
-		if k > 36 {
+		if k > 100 {
 			fmt.Println("END:", i)
 			fmt.Println(time.Now())
 			//Xor.Sav("NUM" + strconv.Itoa(i))

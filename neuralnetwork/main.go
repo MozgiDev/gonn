@@ -4,11 +4,9 @@ import (
 	"math/rand"
 	"time"
 	"fmt"
-	"errors"
 	"math"
 	"encoding/json"
 	"os"
-	"reflect"
 )
 
 type NeuralType  struct {
@@ -26,7 +24,7 @@ type NeuralNetworkType struct {
 	Layers []LayerType
 }
 
-var Ɛ = 0.1
+var Ɛ = 1.
 
 func New(param ...int) *NeuralNetworkType {
 	net := new(NeuralNetworkType)
@@ -62,51 +60,6 @@ func (net *NeuralNetworkType) Init() {
 	}
 }
 
-func (net *NeuralNetworkType) Learn(Input []float64, y []float64) (bool, error) {
-	Output := net.Cogitate(Input)
-	if (len(Output) != len(y)) {
-		return false, errors.New("Output len does not match")
-	}
-
-	if (reflect.DeepEqual(y, Output)) != true {
-		// Retro propagate
-		fmt.Println("#### RETROPROPAGATE")
-		for j := len(net.Layers) - 1; j >= 0; j-- {
-			if j == len(net.Layers) - 1 {
-				//Output layer
-				for k, _ := range net.Layers[j].Neurals {
-					net.Layers[j].Neurals[k].Delta = y[k] - Output[k]
-					for l, _ := range net.Layers[j].Neurals[k].Weight {
-						//fmt.Println("w", l, " av modif : ", net.Layers[j].Neurals[k].Weight[l])
-						net.Layers[j].Neurals[k].Weight[l] = net.Layers[j].Neurals[k].Weight[l] + Ɛ * net.Layers[j].Neurals[k].Input[l] * net.Layers[j].Neurals[k].Delta
-						//fmt.Println("w", l, " ap modif : ", net.Layers[j].Neurals[k].Weight[l])
-					}
-
-				}
-			} else {
-				for k, _ := range net.Layers[j].Neurals {
-					temp := 0.0
-					for l, _ := range net.Layers[j + 1].Neurals {
-						temp += net.Layers[j + 1].Neurals[l].Weight[k] * net.Layers[j + 1].Neurals[l].Delta
-					}
-					net.Layers[j].Neurals[k].Delta = net.Layers[j].Neurals[k].Output * (1 - net.Layers[j].Neurals[k].Output) * temp
-					for l, _ := range net.Layers[j].Neurals[k].Weight {
-						//fmt.Println("w", l, " av modif : ", net.Layers[j].Neurals[k].Weight[l])
-						net.Layers[j].Neurals[k].Weight[l] = net.Layers[j].Neurals[k].Weight[l] + Ɛ * net.Layers[j].Neurals[k].Input[l] * net.Layers[j].Neurals[k].Delta
-						//fmt.Println("w", l, " ap modif : ", net.Layers[j].Neurals[k].Weight[l])
-					}
-
-				}
-			}
-		}
-		return false, nil
-	} else {
-		fmt.Println("#### GOOD")
-		return true, nil
-	}
-
-	return false, nil
-}
 
 func (net *NeuralNetworkType) Cogitate(Input []float64) (Output []float64) {
 	for i := range net.Layers {

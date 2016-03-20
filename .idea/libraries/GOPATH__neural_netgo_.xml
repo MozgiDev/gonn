@@ -18,6 +18,7 @@
       <root url="file://C:/gopath/src/golang.org/x/net/.git" />
       <root url="file://$PROJECT_DIR$" />
       <root url="file://C:/gopath/src/github.com/tools/godep/.git" />
+      <root url="file://C:/gopath/src/github.com/nfnt/resize/.git" />
       <root url="file://C:/gopath/src/github.com/siddontang/ledisdb/Godeps/_workspace" />
       <root url="file://C:/gopath/src/github.com/golang/protobuf/.git" />
       <root url="file://C:/gopath/src/github.com/BurntSushi/toml/_examples" />
@@ -35,6 +36,7 @@
       <root url="file://C:/gopath/src/github.com/getlantern/golog/.git" />
       <root url="file://C:/gopath/src/golang.org/x/net/html/testdata" />
       <root url="file://C:/gopath/src/github.com/lxn/walk/.git" />
+      <root url="file://C:/gopath/src/github.com/tomcraven/goga/.git" />
       <root url="file://C:/gopath/src/github.com/getlantern/byteexec/.git" />
       <root url="file://C:/gopath/src/github.com/0xAX/notificator/.git" />
       <root url="file://C:/gopath/src/github.com/googollee/go-engine.io/.git" />
